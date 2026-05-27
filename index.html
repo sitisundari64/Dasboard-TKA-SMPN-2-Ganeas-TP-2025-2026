@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard TKA 2026 — SMPN 2 Ganeas</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#EEF2F6}
+.dash{display:flex;min-height:100vh;background:#EEF2F6;font-size:13px}
+.sidebar{width:180px;min-width:180px;background:#063D31;color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:20px}
+.sidebar .logo{font-size:15px;font-weight:500;line-height:1.4;color:#5DCAA5}
+.sidebar .school{font-size:11px;color:rgba(255,255,255,.55);line-height:1.5;margin-top:4px}
+.sidebar nav{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:12px;color:rgba(255,255,255,.65);cursor:pointer}
+.nav-item.active{background:rgba(93,202,165,.15);color:#5DCAA5}
+.nav-item i{font-size:16px}
+.main{flex:1;padding:20px;overflow:auto}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.page-title{font-size:16px;font-weight:500;color:#063D31}
+.filter-pills{display:flex;gap:6px}
+.pill{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid #ccc;background:#fff;color:#666;transition:all .2s}
+.pill.active{background:#085041;color:#fff;border-color:#085041}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi-card{background:#fff;border-radius:12px;padding:14px 16px;border:0.5px solid #e0e0e0;cursor:default;transition:transform .2s,box-shadow .2s}
+.kpi-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(8,80,65,.12)}
+.kpi-label{font-size:11px;color:#666;margin-bottom:4px;font-weight:400}
+.kpi-value{font-size:22px;font-weight:500;color:#085041;letter-spacing:-0.5px}
+.kpi-badge{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;margin-top:6px}
+.badge-green{background:#e6f5ee;color:#085041}
+.badge-red{background:#fce8e2;color:#b03a1c}
+.badge-blue{background:#e3f0fc;color:#0c5490}
+.badge-amber{background:#fef3e0;color:#8a5c00}
+.mid-row{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:16px}
+.bot-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+.chart-card{background:#fff;border-radius:12px;padding:16px;border:0.5px solid #e0e0e0}
+.card-title{font-size:12px;font-weight:500;color:#063D31;margin-bottom:12px}
+.chart-wrap{position:relative}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{text-align:left;padding:6px 8px;color:#888;font-weight:500;border-bottom:1px solid #eee}
+.tbl td{padding:6px 8px;border-bottom:0.5px solid #f0f0f0;color:#333}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#f8fbf9}
+.score-pill{display:inline-block;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:500}
+.sp-baik{background:#e6f5ee;color:#085041}
+.sp-memadai{background:#fff8e1;color:#8a5c00}
+.sp-kurang{background:#fce8e2;color:#b03a1c}
+.footer{text-align:center;font-size:10px;color:#888;padding:8px 0 2px;border-top:0.5px solid #e0e0e0;margin-top:4px}
+.legend-row{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:#666;margin-top:8px}
+.leg-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<div class="dash">
+  <div class="sidebar">
+    <div>
+      <div class="logo">TKA 2026<br>SMPN 2 Ganeas</div>
+      <div class="school">Kab. Sumedang<br>Jawa Barat</div>
+    </div>
+    <nav>
+      <div class="nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+      <div class="nav-item"><i class="ti ti-users"></i> Peserta</div>
+      <div class="nav-item"><i class="ti ti-chart-bar"></i> Analisis</div>
+      <div class="nav-item"><i class="ti ti-file-text"></i> Laporan</div>
+    </nav>
+    <div style="margin-top:auto;font-size:10px;color:rgba(255,255,255,.35)">DKHTKA<br>P02250020</div>
+  </div>
+
+  <div class="main">
+    <div class="top-bar">
+      <div class="page-title">Daftar Kolektif Hasil TKA</div>
+      <div class="filter-pills">
+        <div class="pill active" onclick="setFilter('all',this)">Semua</div>
+        <div class="pill" onclick="setFilter('2010',this)">2010</div>
+        <div class="pill" onclick="setFilter('2011',this)">2011</div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Peserta</div>
+        <div class="kpi-value" id="k1">71</div>
+        <div class="kpi-badge badge-blue" id="k1b">Data 2026</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Rata-rata Matematika</div>
+        <div class="kpi-value" id="k2">39.9</div>
+        <div class="kpi-badge badge-amber" id="k2b">Memadai</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Rata-rata B. Indonesia</div>
+        <div class="kpi-value" id="k3">58.4</div>
+        <div class="kpi-badge badge-green" id="k3b">Memadai</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Peserta Nilai Baik (BI)</div>
+        <div class="kpi-value" id="k4">17</div>
+        <div class="kpi-badge badge-green" id="k4b">23.9%</div>
+      </div>
+    </div>
+
+    <div class="mid-row">
+      <div class="chart-card">
+        <div class="card-title">Distribusi Nilai per Mata Pelajaran</div>
+        <div class="legend-row">
+          <span><span class="leg-dot" style="background:#085041"></span>Matematika</span>
+          <span><span class="leg-dot" style="background:#5DCAA5"></span>Bahasa Indonesia</span>
+        </div>
+        <div class="chart-wrap" style="height:220px;margin-top:8px">
+          <canvas id="mainChart" role="img" aria-label="Grafik batang distribusi nilai matematika dan bahasa indonesia">Distribusi nilai peserta TKA 2026.</canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="card-title">Komposisi Kategori (Matematika)</div>
+        <div class="chart-wrap" style="height:180px;margin-top:8px">
+          <canvas id="donutChart" role="img" aria-label="Donut chart komposisi kategori matematika">Komposisi kategori nilai matematika.</canvas>
+        </div>
+        <div class="legend-row" id="donutLegend" style="justify-content:center"></div>
+      </div>
+    </div>
+
+    <div class="bot-row">
+      <div class="chart-card">
+        <div class="card-title">Perbandingan Kategori Nilai</div>
+        <div class="chart-wrap" id="hbarWrap" style="height:160px">
+          <canvas id="hbarChart" role="img" aria-label="Horizontal bar perbandingan kategori nilai">Perbandingan kategori nilai dua mapel.</canvas>
+        </div>
+        <div class="legend-row" style="margin-top:6px">
+          <span><span class="leg-dot" style="background:#085041"></span>Matematika</span>
+          <span><span class="leg-dot" style="background:#5DCAA5"></span>B. Indonesia</span>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="card-title">Sebaran Tahun Lahir Peserta</div>
+        <div class="chart-wrap" style="height:160px">
+          <canvas id="yearChart" role="img" aria-label="Bar chart sebaran tahun lahir peserta">Sebaran tahun lahir peserta.</canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="card-title">10 Nilai Tertinggi (Matematika)</div>
+        <div style="overflow-y:auto;max-height:180px">
+          <table class="tbl" id="topTable">
+            <thead><tr><th>Nama</th><th>MTK</th><th>BI</th></tr></thead>
+            <tbody id="topBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      &copy; 2026 &nbsp;|&nbsp; <strong>Siti Sundari, M.Pd.</strong> &nbsp;&mdash;&nbsp; Kepala SMP Negeri 2 Ganeas, Kab. Sumedang
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const ALL = [
+  {name:"Mochamad Badar Jihad",birth:2010,mtk:40,bi:43.33,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Tiara Anggraeni",birth:2011,mtk:40,bi:93.33,catMtk:"Memadai",catBi:"Baik"},
+  {name:"Riski Hermawan",birth:2011,mtk:20,bi:53.33,catMtk:"Kurang",catBi:"Memadai"},
+  {name:"Farhan Saepul Mu'izz",birth:2010,mtk:60,bi:60,catMtk:"Baik",catBi:"Memadai"},
+  {name:"Nazwa Cinta Oktapiani",birth:2010,mtk:30,bi:63.33,catMtk:"Kurang",catBi:"Memadai"},
+  {name:"Fajar Rijki",birth:2010,mtk:46.67,bi:80,catMtk:"Memadai",catBi:"Baik"},
+  {name:"Vivit Sukaesih",birth:2011,mtk:43.33,bi:70,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Sandi Saputra",birth:2010,mtk:43.33,bi:43.33,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Lingga Mohamad Alwi",birth:2010,mtk:46.67,bi:76.67,catMtk:"Memadai",catBi:"Baik"},
+  {name:"Ajeng Susilawati",birth:2011,mtk:43.33,bi:70,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Wawa Awaludin",birth:2010,mtk:46.67,bi:46.67,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Adhi Ramdhani",birth:2008,mtk:46.67,bi:46.67,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Raisya Nurrizki",birth:2011,mtk:33.33,bi:76.67,catMtk:"Memadai",catBi:"Baik"},
+  {name:"Septiani Putri Aeni",birth:2011,mtk:30,bi:80,catMtk:"Kurang",catBi:"Baik"},
+  {name:"Nika Musaropah",birth:2011,mtk:36.67,bi:70,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Giovani Askar Padilah",birth:2010,mtk:23.33,bi:46.67,catMtk:"Kurang",catBi:"Kurang"},
+  {name:"RADIT ANDITA KATMANA",birth:2010,mtk:63.33,bi:33.33,catMtk:"Baik",catBi:"Kurang"},
+  {name:"Najah Zahwa Ramadani",birth:2011,mtk:56.67,bi:83.33,catMtk:"Baik",catBi:"Baik"},
+  {name:"Keisya Khoirunnisa",birth:2011,mtk:46.67,bi:66.67,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Ramdhan Hidayatuloh",birth:2009,mtk:36.67,bi:66.67,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Nisa Rahma Dhiani",birth:2011,mtk:26.67,bi:63.33,catMtk:"Kurang",catBi:"Memadai"},
+  {name:"Rangga Purnama",birth:2010,mtk:26.67,bi:43.33,catMtk:"Kurang",catBi:"Kurang"},
+  {name:"Mochamad Rizal Ramadhan",birth:2011,mtk:40,bi:53.33,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Ahmad Davi Wijaya Kusuma",birth:2010,mtk:43.33,bi:56.67,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Siska Karina Aprilia",birth:2011,mtk:40,bi:50,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Sherin Putri Aini",birth:2011,mtk:26.67,bi:46.67,catMtk:"Kurang",catBi:"Kurang"},
+  {name:"AHMAD GHANI",birth:2011,mtk:46.67,bi:43.33,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Farah Amanda",birth:2010,mtk:40,bi:63.33,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Isfiana Khaerunnisa",birth:2011,mtk:40,bi:70,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Reza Maulana Yusuf",birth:2010,mtk:16.67,bi:66.67,catMtk:"Kurang",catBi:"Memadai"},
+  {name:"Illyas Dwi Putra",birth:2010,mtk:40,bi:70,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Putri Novia Khairunnisa",birth:2010,mtk:53.33,bi:73.33,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"MUHAMAD KYSAN",birth:2011,mtk:43.33,bi:46.67,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Aan Ali Fazri",birth:2010,mtk:43.33,bi:43.33,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Muhammad Rasya Alkhatiri",birth:2010,mtk:56.67,bi:73.33,catMtk:"Baik",catBi:"Memadai"},
+  {name:"Cut Natasya Satriani",birth:2011,mtk:36.67,bi:50,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Yuli Milannisa Putri",birth:2010,mtk:33.33,bi:63.33,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"DESY NUR LUCYANSYAH",birth:2010,mtk:43.33,bi:86.67,catMtk:"Memadai",catBi:"Baik"},
+  {name:"Fasha Taufik Ramdan",birth:2011,mtk:36.67,bi:76.67,catMtk:"Memadai",catBi:"Baik"},
+  {name:"KURNIAWAN JULIANA",birth:2010,mtk:36.67,bi:26.67,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Rafa Ibnu Akbar",birth:2011,mtk:33.33,bi:43.33,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Azis Fadillah Maulana",birth:2011,mtk:63.33,bi:46.67,catMtk:"Baik",catBi:"Kurang"},
+  {name:"Tubagus Heryanto",birth:2010,mtk:43.33,bi:23.33,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"SYAKIRA KHANZA AULIA",birth:2010,mtk:60,bi:83.33,catMtk:"Baik",catBi:"Baik"},
+  {name:"Silsi Rosyida",birth:2010,mtk:33.33,bi:46.67,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Muhamad Khoerul Azmi",birth:2010,mtk:43.33,bi:56.67,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Doni Yudiansyah",birth:2010,mtk:23.33,bi:30,catMtk:"Kurang",catBi:"Kurang"},
+  {name:"Deva Faudji Hikmatiyar",birth:2011,mtk:46.67,bi:76.67,catMtk:"Memadai",catBi:"Baik"},
+  {name:"Adiani Zahra",birth:2011,mtk:33.33,bi:56.67,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Muhamad Afrizal",birth:2010,mtk:43.33,bi:73.33,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Nesta Ramdan Nugraha",birth:2010,mtk:46.67,bi:63.33,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"AINUN NURBAETI",birth:2011,mtk:56.67,bi:90,catMtk:"Baik",catBi:"Baik"},
+  {name:"Risma Kania Putri",birth:2011,mtk:33.33,bi:63.33,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Melinda Nur Aini",birth:2011,mtk:33.33,bi:50,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Kaka Nugraha",birth:2011,mtk:33.33,bi:60,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Mumun Muttakiyah",birth:2010,mtk:30,bi:60,catMtk:"Kurang",catBi:"Memadai"},
+  {name:"Muhamad Erlangga Adji Pangestu",birth:2010,mtk:50,bi:46.67,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Mumtaz Zahra",birth:2010,mtk:36.67,bi:70,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Faisal Efendi",birth:2010,mtk:33.33,bi:56.67,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Revani Nailah",birth:2011,mtk:40,bi:50,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"CINDY RAHAYU",birth:2011,mtk:33.33,bi:80,catMtk:"Memadai",catBi:"Baik"},
+  {name:"Arif Rahmat Hakim",birth:2010,mtk:30,bi:30,catMtk:"Kurang",catBi:"Kurang"},
+  {name:"Herdyansah",birth:2010,mtk:33.33,bi:33.33,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Asya Nur Salsabila",birth:2011,mtk:63.33,bi:60,catMtk:"Baik",catBi:"Memadai"},
+  {name:"RANGGA ADHITYA",birth:2010,mtk:26.67,bi:30,catMtk:"Kurang",catBi:"Kurang"},
+  {name:"ABI IKHSAN YANUAR",birth:2010,mtk:40,bi:20,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Sandrina Meita Kirana Yusup",birth:2010,mtk:36.67,bi:66.67,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"Diky Mulyadi",birth:2010,mtk:36.67,bi:43.33,catMtk:"Memadai",catBi:"Kurang"},
+  {name:"Revina Nadirah",birth:2011,mtk:33.33,bi:63.33,catMtk:"Memadai",catBi:"Memadai"},
+  {name:"SITI NAILA ROHMAH",birth:2011,mtk:63.33,bi:46.67,catMtk:"Baik",catBi:"Kurang"},
+  {name:"Ahmad Pauzi Ridwan",birth:2010,mtk:36.67,bi:46.67,catMtk:"Memadai",catBi:"Kurang"}
+];
+
+let currentFilter = 'all';
+let mainChart, donutChart, hbarChart, yearChart;
+
+function filtered() {
+  if(currentFilter==='all') return ALL;
+  return ALL.filter(d=>d.birth==currentFilter);
+}
+
+function avg(arr,key){
+  if(!arr.length)return 0;
+  return arr.reduce((s,d)=>s+d[key],0)/arr.length;
+}
+
+function countCat(arr,field,cat){
+  return arr.filter(d=>d[field]===cat).length;
+}
+
+function animateNum(el, to, decimals=1){
+  const from = parseFloat(el.textContent)||0;
+  const dur=600, steps=30;
+  let i=0;
+  const timer=setInterval(()=>{
+    i++;
+    const v = from + (to-from)*(i/steps);
+    el.textContent = decimals===0 ? Math.round(v) : v.toFixed(decimals);
+    if(i>=steps){clearInterval(timer);el.textContent=decimals===0?Math.round(to):to.toFixed(decimals);}
+  },dur/steps);
+}
+
+function updateKPI(data){
+  const total=data.length;
+  const avgM=avg(data,'mtk');
+  const avgB=avg(data,'bi');
+  const baikBi=countCat(data,'catBi','Baik');
+  const pct=total?((baikBi/total)*100).toFixed(1):0;
+
+  animateNum(document.getElementById('k1'),total,0);
+  animateNum(document.getElementById('k2'),avgM,1);
+  animateNum(document.getElementById('k3'),avgB,1);
+  animateNum(document.getElementById('k4'),baikBi,0);
+
+  const catM = avgM>=60?'Baik':avgM>=33.33?'Memadai':'Kurang';
+  const catB = avgB>=60?'Baik':avgB>=33.33?'Memadai':'Kurang';
+  const mb2 = document.getElementById('k2b');
+  const mb3 = document.getElementById('k3b');
+  mb2.textContent=catM; mb3.textContent=catB;
+  mb2.className='kpi-badge '+(catM==='Baik'?'badge-green':catM==='Memadai'?'badge-amber':'badge-red');
+  mb3.className='kpi-badge '+(catB==='Baik'?'badge-green':catB==='Memadai'?'badge-amber':'badge-red');
+  document.getElementById('k4b').textContent=pct+'%';
+}
+
+function buildBins(data){
+  const bins=[0,10,20,30,40,50,60,70,80,90,100];
+  const labels=bins.slice(0,-1).map((v,i)=>v+'-'+bins[i+1]);
+  const mtkCounts=labels.map((_,i)=>data.filter(d=>d.mtk>=bins[i]&&d.mtk<bins[i+1]).length);
+  const biCounts=labels.map((_,i)=>data.filter(d=>d.bi>=bins[i]&&d.bi<bins[i+1]).length);
+  return {labels,mtkCounts,biCounts};
+}
+
+function updateMainChart(data){
+  const {labels,mtkCounts,biCounts}=buildBins(data);
+  mainChart.data.labels=labels;
+  mainChart.data.datasets[0].data=mtkCounts;
+  mainChart.data.datasets[1].data=biCounts;
+  mainChart.update('active');
+}
+
+function updateDonut(data){
+  const baik=countCat(data,'catMtk','Baik');
+  const memadai=countCat(data,'catMtk','Memadai');
+  const kurang=countCat(data,'catMtk','Kurang');
+  donutChart.data.datasets[0].data=[baik,memadai,kurang];
+  donutChart.update('active');
+  document.getElementById('donutLegend').innerHTML=
+    `<span><span class="leg-dot" style="background:#085041"></span>Baik ${baik}</span>
+     <span><span class="leg-dot" style="background:#5DCAA5"></span>Memadai ${memadai}</span>
+     <span><span class="leg-dot" style="background:#D85A30"></span>Kurang ${kurang}</span>`;
+}
+
+function updateHbar(data){
+  const cats=['Baik','Memadai','Kurang'];
+  const mtkD=cats.map(c=>countCat(data,'catMtk',c));
+  const biD=cats.map(c=>countCat(data,'catBi',c));
+  hbarChart.data.datasets[0].data=mtkD;
+  hbarChart.data.datasets[1].data=biD;
+  document.getElementById('hbarWrap').style.height=Math.max(130,cats.length*45+40)+'px';
+  hbarChart.update('active');
+}
+
+function updateYearChart(data){
+  const years=[...new Set(ALL.map(d=>d.birth))].sort();
+  const counts=years.map(y=>data.filter(d=>d.birth===y).length);
+  yearChart.data.labels=years;
+  yearChart.data.datasets[0].data=counts;
+  yearChart.update('active');
+}
+
+function updateTable(data){
+  const top=[...data].sort((a,b)=>b.mtk-a.mtk).slice(0,10);
+  const tb=document.getElementById('topBody');
+  tb.innerHTML=top.map(d=>`<tr>
+    <td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${d.name}">${d.name}</td>
+    <td><span class="score-pill sp-${d.catMtk.toLowerCase()}">${d.mtk.toFixed(1)}</span></td>
+    <td><span class="score-pill sp-${d.catBi.toLowerCase()}">${d.bi.toFixed(1)}</span></td>
+  </tr>`).join('');
+}
+
+function updateAll(){
+  const data=filtered();
+  updateKPI(data);
+  updateMainChart(data);
+  updateDonut(data);
+  updateHbar(data);
+  updateYearChart(data);
+  updateTable(data);
+}
+
+function setFilter(f,el){
+  currentFilter=f;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  updateAll();
+}
+
+const {labels:initLabels,mtkCounts:initM,biCounts:initB}=buildBins(ALL);
+
+mainChart=new Chart(document.getElementById('mainChart'),{
+  type:'bar',
+  data:{labels:initLabels,datasets:[
+    {label:'Matematika',data:initM,backgroundColor:'#085041',borderRadius:3,barPercentage:0.45},
+    {label:'Bahasa Indonesia',data:initB,backgroundColor:'#5DCAA5',borderRadius:3,barPercentage:0.45}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,animation:{duration:500},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+' siswa'}}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'#f0f0f0'},ticks:{font:{size:10},stepSize:2}}}}
+});
+
+const cats=['Baik','Memadai','Kurang'];
+const baikD=cats.map(c=>countCat(ALL,'catMtk',c));
+donutChart=new Chart(document.getElementById('donutChart'),{
+  type:'doughnut',
+  data:{labels:cats,datasets:[{data:baikD,backgroundColor:['#085041','#5DCAA5','#D85A30'],borderWidth:2,borderColor:'#fff',hoverOffset:6}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',animation:{duration:500},
+    plugins:{legend:{display:false}}}
+});
+document.getElementById('donutLegend').innerHTML=cats.map((c,i)=>{
+  const col=['#085041','#5DCAA5','#D85A30'][i];
+  return `<span><span class="leg-dot" style="background:${col}"></span>${c} ${baikD[i]}</span>`;
+}).join('');
+
+hbarChart=new Chart(document.getElementById('hbarChart'),{
+  type:'bar',
+  data:{labels:cats,datasets:[
+    {label:'Matematika',data:cats.map(c=>countCat(ALL,'catMtk',c)),backgroundColor:'#085041',borderRadius:3,barPercentage:0.5},
+    {label:'B. Indonesia',data:cats.map(c=>countCat(ALL,'catBi',c)),backgroundColor:'#5DCAA5',borderRadius:3,barPercentage:0.5}
+  ]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:{duration:500},
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'#f0f0f0'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:11}}}}}
+});
+
+const years=[...new Set(ALL.map(d=>d.birth))].sort();
+yearChart=new Chart(document.getElementById('yearChart'),{
+  type:'bar',
+  data:{labels:years,datasets:[{label:'Peserta',data:years.map(y=>ALL.filter(d=>d.birth===y).length),
+    backgroundColor:years.map((_,i)=>['#085041','#5DCAA5','#D85A30','#b06020'][i%4]),borderRadius:3,barPercentage:0.55}]},
+  options:{responsive:true,maintainAspectRatio:false,animation:{duration:500},
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'#f0f0f0'},ticks:{font:{size:10},stepSize:5}}}}
+});
+
+updateTable(ALL);
+</script>
+</body>
+</html>
